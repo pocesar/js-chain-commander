@@ -1,0 +1,36 @@
+{
+  "name": "chain-commander",
+  "version": "0.1.0",
+  "repository": {
+    "type":"git",
+    "url":"https://github.com/pocesar/js-chain-commander"
+  },
+  "authors": [
+    "Paulo Cesar https://github.com/pocesar"
+  ],
+  "description": "Chain commander is a library based on Q library, to encapsulate business rules logic in form of javascript objects or JSON.",
+  "main": "./lib/chain-commander.js",
+  "license": "MIT",
+  "keywords": [
+    "workflow",
+    "flow",
+    "flowcontrol",
+    "business logic",
+    "business rule",
+    "json",
+    "pojo",
+    "chain-of-responsibility",
+    "chain-of-command",
+    "promise",
+    "conditional"
+  ],
+  "ignore": [
+    "**/.*",
+    "test",
+    "node_modules",
+    "bower_components"
+  ],
+  "dependencies": {
+    "q": "*"
+  }
+}
