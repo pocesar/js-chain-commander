@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/pocesar/js-chain-commander.png?branch=master)](https://travis-ci.org/pocesar/js-chain-commander)
+
 Chain Commander
 ==================
 
