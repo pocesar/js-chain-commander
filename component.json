@@ -1,7 +1,7 @@
 {
   "name": "chain-commander",
   "repo": "pocesar/js-chain-commander.js",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "Chain commander is a library based on Q library, to encapsulate business rules logic in form of javascript objects or JSON.",
   "keywords": [
     "workflow",

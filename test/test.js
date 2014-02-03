@@ -15,6 +15,16 @@ module.exports = {
       cc = CC({});
       expect(cc.obj).to.eql([{}]);
     },
+    'if without member check is forgiving':function(done){
+      CC([
+        {if:{
+          exec:[['done']]
+        }}
+      ]).execute('ok', {}).then(function(value){
+        expect(value).to.equal('ok');
+        done();
+      }).done();
+    },
     'exec call functions in the context object': function(done){
       var cc, obj;
 
@@ -290,9 +300,18 @@ module.exports = {
                   if: {
                     check:[['yes']],
                     exec:[['done']]
-                  }
+                  },
+                  exec:[['returnUndefined']]
                 }
               }
+            }
+          }
+        },
+        {
+          if: {
+            check:[['no']],
+            else: {
+              exec:[['throws']]
             }
           }
         }
@@ -305,8 +324,13 @@ module.exports = {
         yes: function(){
           return true;
         },
-        done: function(){
+        done: function(value){
           return 'done';
+        },
+        returnUndefined: function(){
+        },
+        throws: function(){
+          throw new Error('else throw');
         }
       };
 
@@ -389,6 +413,70 @@ module.exports = {
         done();
       });
     },
+    'two if checks': function(done){
+      var context, cmds = [
+        {
+          if:{
+            check: [
+              ['returnFalse'],
+              ['returnTrue']
+            ],
+            exec:[
+              ['callIt']
+            ]
+          }
+        }
+      ], cc;
+
+      context = {
+        count: 0,
+        called: false,
+        returnTrue: function(){
+          this.count++;
+          return true;
+        },
+        returnFalse: function(){
+          this.count++;
+          return false;
+        },
+        callIt: function(){
+          this.called = true;
+        }
+      };
+
+      cc = new CC(cmds);
+      cc.execute('', context).then(function(){
+        expect(context.called).to.be(false);
+        expect(context.count).to.be(1);
+        done();
+      }).done();
+    },
+    'execute array of chain commanders': function(done){
+      var context, cmds = [
+          {
+            exec: [['append']]
+          }
+        ], ccs = [
+          new CC(cmds),
+          new CC(cmds),
+          new CC(cmds),
+          new CC(cmds),
+          new CC(cmds)
+        ];
+
+      context = {
+        count: 0,
+        letters: 'abcd',
+        append: function(value){
+          return value + this.letters[this.count++ % this.letters.length];
+        }
+      };
+
+      CC.all('wow-', ccs, context).then(function(value){
+        expect(value).to.equal('wow-abcda');
+        done();
+      }).done();
+    },
     'forgiving on non existant checks and functions': function(done){
       var cc, obj = {thisOneDoes: function(plus, value){ return value + plus; }}, cmds = [
         {
@@ -412,11 +500,16 @@ module.exports = {
       });
     },
     'unforgiving definition': function(done) {
-      var ifDomain = domain.create(), execDomain = domain.create();
-      var cc, obj = {}, cmds = [
+      var execDomain = domain.create(),
+        cmds = [
         {
           if: {
             check:[['dontExist']]
+          }
+        },
+        {
+          if: {
+            exec:[['doh']]
           }
         },
         {
@@ -424,25 +517,37 @@ module.exports = {
         }
       ];
 
-      cc = CC(cmds, {throws: true});
+      var thrown = 0;
 
-      ifDomain.on('error', function(err){
-        expect(err.message).to.be('"if" function "dontExist" doesnt exists');
-        cc = CC(cmds.pop(), {throws: true});
+      var run = function(){
+        var cc;
 
-        execDomain.on('error', function(err){
-          expect(err.message).to.be('"exec" function "dontExists" doesnt exists');
-          done();
-        });
-
+        cc = new CC(cmds.slice(thrown), {throws: true});
         execDomain.run(function(){
-          cc.execute(0, obj).done(function(){});
+          cc.execute(0, {}).done(function(){});
         });
+      };
+
+      execDomain.on('error', function(err){
+        switch (thrown) {
+          case 0:
+            expect(err.message).to.be('"if" function "dontExist" doesnt exists');
+            thrown++;
+            run();
+            break;
+          case 1:
+            expect(err.message).to.be('Missing "checks" in "if"');
+            thrown++;
+            run();
+            break;
+          case 2:
+            expect(err.message).to.be('"exec" function "dontExists" doesnt exists');
+            done();
+            break;
+        }
       });
 
-      ifDomain.run(function(){
-        cc.execute(0, obj).done(function(){});
-      });
+      run();
     }
   }
 };

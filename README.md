@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/pocesar/js-chain-commander.png?branch=master)](https://travis-ci.org/pocesar/js-chain-commander)
+[![Build Status](https://travis-ci.org/pocesar/js-chain-commander.png?branch=master)](https://travis-ci.org/pocesar/js-chain-commander) [![Coverage Status](https://coveralls.io/repos/pocesar/js-chain-commander/badge.png)](https://coveralls.io/r/pocesar/js-chain-commander)
 
 Chain Commander
 ==================
@@ -252,7 +252,7 @@ This is `items.json`:
         "price":780,
         "definitions":[
             {"if": {
-                "conditions":[
+                "check":[
                     ["isSelected"]
                 ],
                 "exec":[
@@ -260,7 +260,7 @@ This is `items.json`:
                 ]
             }},
             {"if": {
-                "conditions":[
+                "check":[
                     ["isCombo"]
                 ],
                 "exec":[
@@ -287,7 +287,7 @@ This is `items.json`:
         "price":1250,
         "definitions":[
             {"if": {
-                "conditions":[
+                "check":[
                     ["isSelected"]
                 ],
                 "exec":[
@@ -297,6 +297,16 @@ This is `items.json`:
         ]
     }
 ]
+```
+
+## ChainCommander.all
+
+Taking that you have an array with many chaincommanders, that you want to execute in order, with the same context:
+
+```js
+ChainCommander.all('initial value', arrayOfCommanders, context).done(function(value){
+  // initial value transformed
+});
 ```
 
 ## Debug
