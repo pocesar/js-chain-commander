@@ -19,7 +19,9 @@ module.exports = function(grunt) {
 
   grunt.event.on('coverage', function(data){
     process.env.NODE_COVERALLS_DEBUG = 1;
-    
+    grunt.log.writeln('Travis JOB ID:', process.env.TRAVIS_JOB_ID);
+    grunt.log.writeln('Travis ENV:', process.env.TRAVIS);
+
     var coveralls = require('coveralls');
 
     coveralls.handleInput(data, function(err){
