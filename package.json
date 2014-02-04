@@ -1,6 +1,6 @@
 {
   "name"   : "chain-commander",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "main": "./lib/chain-commander.js",
   "description":"Chain commander is a library based on Q library, to encapsulate business rules logic in form of javascript objects or JSON.",
   "keywords": [

@@ -17,18 +17,14 @@ module.exports = function(grunt) {
     }
   });
 
-  grunt.event.on('coverage', function(data){
-    process.env.NODE_COVERALLS_DEBUG = 1;
-    process.env.TRAVIS_JOB_ID = 18185530;
-    process.env.TRAVIS = true;
-    grunt.log.writeln('Travis JOB ID:', process.env.TRAVIS_JOB_ID);
-    grunt.log.writeln('Travis ENV:', process.env.TRAVIS);
-
+  grunt.event.on('coverage', function(data, done){
     var coveralls = require('coveralls');
 
     coveralls.handleInput(data, function(err){
       if (err) {
-        throw err;
+        done(err);
+      } else {
+        done();
       }
     });
   });
