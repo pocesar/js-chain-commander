@@ -18,7 +18,11 @@ module.exports = function(grunt) {
   });
 
   grunt.event.on('coverage', function(data){
-    require('coveralls').handleInput(data, function(){ });
+    require('coveralls').handleInput(data, function(err){
+      if (err) {
+        throw err;
+      }
+    });
   });
 
   grunt.loadNpmTasks('grunt-mocha-istanbul');
