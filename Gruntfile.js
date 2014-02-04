@@ -18,7 +18,10 @@ module.exports = function(grunt) {
   });
 
   grunt.event.on('coverage', function(data){
-    require('coveralls').handleInput(data, function(err){
+    var coveralls = require('coveralls');
+    process.env.NODE_COVERALLS_DEBUG = 1;
+    
+    coveralls.handleInput(data, function(err){
       if (err) {
         throw err;
       }
