@@ -186,7 +186,7 @@ type of app created with Chain Commander and AngularJS (do a `bower install` ins
 
 ## API
 
-### `new ChainCommander(Array|String definitions, Object options)`
+#### `new ChainCommander(Array|String definitions, Object options)`
 
 Creates a new predefined chain that will execute your code when you call `execute`
 
@@ -194,7 +194,7 @@ Creates a new predefined chain that will execute your code when you call `execut
 var cc = new ChainCommander([{"exec":[["oops"]]}], {debug: true, throws: true});
 ```
 
-### `ChainCommander.prototype.execute(* initialValue, Object|Function context)`
+#### `ChainCommander.prototype.execute(* initialValue, Object|Function context)`
 
 Executes your definitions on the given context. Returns a promise.
 
@@ -211,7 +211,7 @@ cc.execute({initial: 'a', value: 0}, context).done(function(value){
 });
 ```
 
-### `ChainCommander.all(* value, Array arr, Object|Function context)`
+#### `ChainCommander.all(* value, Array arr, Object|Function context)`
 
 Taking that you have an array with many Chain Commanders, that you want to execute in order, with the same context
 returning a promise in the end:
