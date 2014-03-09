@@ -635,7 +635,7 @@ describe('Chain Commander', function (){
           run();
           break;
         case 1:
-          expect(err.message).to.be('Missing "checks" in "if"');
+          expect(err.message).to.be('Missing "check" in "if"');
           thrown++;
           run();
           break;

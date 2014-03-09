@@ -2,7 +2,7 @@
   "bitwise" : true,
   "curly"   : true,
   "eqeqeq"  : false,
-  "forin"   : true,
+  "forin"   : false,
   "noarg"   : true,
   "noempty" : false,
   "newcap"  : false,
