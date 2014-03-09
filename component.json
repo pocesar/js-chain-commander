@@ -1,8 +1,8 @@
 {
   "name": "chain-commander",
   "repo": "pocesar/js-chain-commander",
-  "version": "0.1.2",
-  "description": "Chain commander is a library based on Q library, to encapsulate business rules logic in form of javascript objects or JSON.",
+  "version": "1.0.1",
+  "description": "Chain commander is a library based on Bluebird library, to encapsulate business rules logic in form of javascript objects or JSON.",
   "keywords": [
     "workflow",
     "flow",
@@ -14,7 +14,9 @@
     "chain-of-responsibility",
     "chain-of-command",
     "promise",
-    "conditional"
+    "conditional",
+    "scriptable",
+    "json script"
   ],
   "dependencies": {
     "petkaantonov/bluebird": "*"
