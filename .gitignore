@@ -1,3 +1,5 @@
 .idea
 node_modules
 coverage
+bower_components
+example/bower_components

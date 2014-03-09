@@ -1,3 +1,167 @@
-[
-
-]
+{
+  "behaviors"    : [
+    {
+      "name"    : "Wanna try stuff",
+      "discount": 0.0,
+      "selected": false,
+      "definitions": [
+        {
+          "exec":[["discount",0.0]]
+        }
+      ]
+    },
+    {
+      "name"    : "Ultra Extreme",
+      "discount": 0.10,
+      "selected": false,
+      "definitions": [
+        {
+          "exec":[["discount",0.10]]
+        }
+      ]
+    },
+    {
+      "name"    : "Adventure type",
+      "discount": 0.04,
+      "selected": false,
+      "definitions": [
+        {
+          "exec":[["discount",0.04]]
+        }
+      ]
+    }
+  ],
+  "combos"  : {
+    "2,1": {
+      "applied": false,
+      "value": 0.10
+    },
+    "4,3": {
+      "applied": false,
+      "value": 0.08
+    }
+  },
+  "items"    : [
+    {
+      "name"       : "Sky diving",
+      "selected"   : false,
+      "id"         : 1,
+      "price"      : 2900,
+      "definitions": [
+        {
+          "if": {
+            "check":[
+                ["combo",[2,1]]
+            ],
+            "exec": [["sum",[2,1]]],
+            "else": {
+              "exec":[
+                ["sum",2900]
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name"       : "Snowboarding",
+      "selected"   : false,
+      "id"         : 2,
+      "price"      : 780,
+      "definitions": [
+        {
+          "if": {
+            "check":[
+                ["combo",[2,1]]
+            ],
+            "exec": [["sum",[2,1]]],
+            "else": {
+              "exec":[
+                ["sum",780]
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name"       : "Scuba Diving",
+      "selected"   : false,
+      "id"         : 3,
+      "price"      : 2500,
+      "definitions": [
+        {
+          "if": {
+            "check":[
+                ["combo",[4,3]]
+            ],
+            "exec": [["sum",[4,3]]],
+            "else": {
+              "exec":[
+                ["sum",2500]
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name"       : "Trail Bike",
+      "selected"   : false,
+      "id"         : 4,
+      "price"      : 1250,
+      "definitions": [
+        {
+          "if": {
+            "check":[
+                ["combo",[4,3]]
+            ],
+            "exec": [["sum",[4,3]]],
+            "else": {
+              "exec":[
+                ["sum",1250]
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "durations": [
+    {
+      "length"  : 1,
+      "selected": false,
+      "definitions": [
+        {
+          "exec":[["discount",0.0]]
+        }
+      ]
+    },
+    {
+      "length"  : 3,
+      "selected": false,
+      "discount": 0.05,
+      "definitions": [
+        {
+          "exec":[["discount",0.05]]
+        },
+        {
+          "exec":[["multiply",3]]
+        }
+      ]
+    },
+    {
+      "length"  : 6,
+      "selected": false,
+      "discount": 0.10,
+      "definitions": [
+        {
+          "exec":[["discount",0.10]]
+        },
+        {
+          "exec":[["multiply",6]]
+        }
+      ]
+    }
+  ]
+}

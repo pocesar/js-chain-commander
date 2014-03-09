@@ -1,0 +1,16 @@
+{
+  "name": "example",
+  "version": "0.0.0",
+  "homepage": "https://github.com/pocesar/js-chain-commander",
+  "authors": [
+    "Paulo Cesar <email@pocesar.e4ward.com>"
+  ],
+  "main": "example.html",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "angular": "1.2.x",
+    "bluebird": "1.0.x",
+    "bootstrap": "twbs/bootstrap#~3.x.x"
+  }
+}

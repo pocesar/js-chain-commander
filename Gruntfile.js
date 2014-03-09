@@ -4,12 +4,14 @@ module.exports = function(grunt) {
       coverage: {
         src: 'test',
         options: {
+          reporter: 'dot',
           quiet: true
         }
       },
       coveralls: {
         src: 'test',
         options: {
+          reporter: 'dot',
           coverage: true,
           quiet: true
         }

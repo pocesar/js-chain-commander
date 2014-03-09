@@ -1,3 +1,5 @@
 .idea
 node_modules
 .git
+bower_components
+example/bower_components

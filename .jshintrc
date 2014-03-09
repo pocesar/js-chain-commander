@@ -11,6 +11,15 @@
   "devel"   : true,
   "node"    : true,
   "sub"     : true,
-  "globals" : {"angular": true,"ChainCommander":true},
+  "globals" : {
+    "angular": true,
+    "ChainCommander":true,
+    "it": true,
+    "describe": true,
+    "CC": true,
+    "expect": true,
+    "Q": true,
+    "domain": true
+  },
   "quotmark": "single"
 }

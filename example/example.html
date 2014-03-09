@@ -1,14 +1,36 @@
 <!doctype html>
 <html>
 	<head>
-		<script type="text/javascript" src="https://rawgithub.com/kriskowal/q/master/q.js"></script>
-		<script type="text/javascript" src="https://rawgithub.com/pocesar/js-chain-commander/master/lib/chain-commander.js"></script>
-		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular.js"></script>
+		<link type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+		<link type="text/css" href="bower_components/bootstrap/dist/css/bootstrap-theme.css" rel="stylesheet">
+		<script type="text/javascript" src="bower_components/jquery/dist/jquery.js"></script>
+		<script type="text/javascript" src="bower_components/bluebird/js/browser/bluebird.js"></script>
+		<script type="text/javascript" src="../lib/chain-commander.js"></script>
+		<script type="text/javascript" src="bower_components/angular/angular.js"></script>
 		<script type="text/javascript" src="app.js"></script>
 	</head>
 	<body ng-app="app">
-		<div ng-controller="MainCtrl as main">
+		<div ng-controller="MainCtrl as main" class="container">
+			<h1>Extreme Sports Store</h1>
+			<h4>What describes you?</h4>
+			<ul class="list-inline clearfix">
+				<li clicky="behaviors"></li>
+			</ul>
+			<h4>What makes your clock ticking?</h4>
+			<ul class="list-inline clearfix">
+				<li clicky="items"></li>
+			</ul>
+			<h4>How long do you intend to do those stuff?</h4>
+			<ul class="list-inline clearfix">
+				<li clicky="durations"></li>
+			</ul>
 
+			<div class="clearfix">
+				<div class="col-lg-11 text-right well">{{ main.state.discountedTotal|currency }} {{ main.state.discount('OFF: ') }}</div>
+				<div class="col-lg-1 ">
+					<button class="btn btn-default btn-block" ng-click="main.go()">GO!</button>
+				</div>
+			</div>
 		</div>
 	</body>
 </html>

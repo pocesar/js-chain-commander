@@ -1,6 +1,6 @@
 {
   "name": "chain-commander",
-  "repo": "pocesar/js-chain-commander.js",
+  "repo": "pocesar/js-chain-commander",
   "version": "0.1.2",
   "description": "Chain commander is a library based on Q library, to encapsulate business rules logic in form of javascript objects or JSON.",
   "keywords": [
@@ -16,6 +16,9 @@
     "promise",
     "conditional"
   ],
+  "dependencies": {
+    "petkaantonov/bluebird": "*"
+  },
   "scripts": ["./lib/chain-commander.js"],
   "main": "./lib/chain-commander.js",
   "license": "MIT"

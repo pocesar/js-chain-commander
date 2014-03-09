@@ -3,7 +3,7 @@
 Chain Commander
 ==================
 
-Chain commander is a library based on [Q](https://github.com/kriskowal/q) library, to encapsulate
+Chain commander is a library based on [bluebird](https://github.com/petkaantonov/bluebird) library, to encapsulate
 business rules logic in form of javascript objects or JSON.
 
 Since it uses promises, it can keep going until no more "then"s are found, while mutating the value it started with.
@@ -25,14 +25,14 @@ Require it in your node:
 
 ```js
 var
-    Q = require('q'),
+    Q = require('bluebird'),
     cc = require('chain-commander')(Q);
 ```
 
-or browser, after Q:
+or browser, after Bluebird:
 
 ```html
-<script src="q.js"></script>
+<script src="bluebird.min.js"></script>
 <script src="chain-commander.js"></script>
 ```
 
@@ -41,35 +41,59 @@ or browser, after Q:
 Let's pretend you have a lot of users and each user have their own triggers and conditional, so they can
 execute their own "code" in your app, like give instructions to your app to execute code in order they are meant to.
 
-The rules are meant to be "non verbose", to be easy to write and adapt easily, when testing with new rules on the database for example.
+Basically, your definitions should not be aware of your object data, but your context functions should.
+That means that if your object has an id, a name and some definitions, and if you want your function to
+know the id, you should pass your objects to the `execute` function or a literal argument.
+
+You can store anything in the the rules, from coordinates, sequence of commands, conditional statements, pairs of data.
+
+The rules are meant to be "non verbose", to be easy to write and adapt, when testing with new rules on the database or json file
+for example. It's also meant to feel natural and familiar to javascript (`if` and `else`, brackets and strings).
+
+They offload the dynamic nature of your applcation to where it belongs: your data. The application code should only be prepared
+to deal with whatever you throw at it.
 
 ```js
 var cmds = [ // It uses arrays because it's the only way it can ensure order.
         {
           if: {
             // if (obj.check("first") and obj.check("second")) then
+
             check: [
               ['check', 'first'], // must match all
               ['check', 'second']
             ],
+
             // will be executed if obj.check("first") and obj.check("second") returns true
+
+            // ALL checks can return promises as well
+
             exec      : [
               ['multiply', 10]
             ],
+
             // neither checks were present, make another check
-            // else works as "if not"
+
+            // "else" works as "if not"
+
             else      : {
               if  : {
+
                 // else if (obj.check("third")) then
+
                 check: [
                   ['check', 'third'] // obj.check("third")
                 ],
+
                 // will be executed only the obj.check("third") returns true
+
                 exec      : [
                   ['alert', {msg: 'aww yeah'}] // alert({msg: "aww yeah"})
                 ]
               },
+
               // this will be executed regardless of the above if
+
               exec: [
                 ['add', 1],               // execute add(1)
                 ['alert', {msg: 'else'}]  // execute alert({msg: "else"})
@@ -98,12 +122,13 @@ var cmds = [ // It uses arrays because it's the only way it can ensure order.
       ];
 ```
 
-Given the above object/JSON, you will create a new function that will execute everything in order:
+Given the above object/JSON, you will create a new context that will deal with all the data in order:
 
 ```js
       var instance = {
         myvalue   : 3,
-        check     : function (type, value){
+        check     : function (type, value){ // if in your definition, you call your function with paramters, the last param
+                                            // (in this case, called "value") will always be the current value in chain
           if (type === 'first') {
             return value > 0;
           } else if (type === 'second') {
@@ -121,11 +146,12 @@ Given the above object/JSON, you will create a new function that will execute ev
           return value + number;
         },
         log     : function (args, value){
-          console.log(args.msg + ': ' + value);
+          console.log(args.msg + ': ' + value); // does nothing, just logs to console
           return value;
         },
         goOn      : function (value){
-          if (!this.secondPass) {
+          if (!this.secondPass) { // pay attention that the context is at the moment of the execution
+
             this.secondPass = true; // important so it won't create an endless loop
             return cc.execute(value, instance); // yes, you can execute the same CC and continue from there, start all over
           }
@@ -153,155 +179,42 @@ Given the above object/JSON, you will create a new function that will execute ev
       });
 ```
 
-The above is a silly example, below is a more serious usage, in a "build your plan with combos and many activities" type of app:
+The above is a "silly" example (although a long one).
 
-The below example is a directive in AngularJS:
+For a full-fledged practical example, check the `example` folder, there's a "build your plan with combos and many activities"
+type of app created with Chain Commander and AngularJS (do a `bower install` inside that folder first)
+
+## API
+
+### `new ChainCommander(Array|String definitions, Object options)`
+
+Creates a new predefined chain that will execute your code when you call `execute`
 
 ```js
-app.directive('selectItem', function($timeout){
-    return {
-        restrict: 'A',
-        controller: function($scope){
-            var allItems = function(ids, state, where){
-                for(var i = 0, len = $scope.items.length; i < len; i++) {
-                    if (ids.indexOf($scope.items[i].id) !== -1) {
-                        $scope.items[i][where] = state;
-                    }
-                }
-            };
+var cc = new ChainCommander([{"exec":[["oops"]]}], {debug: true, throws: true});
+```
 
-            // this is a chained command, if you don't return anything, the value passed to the execute
-            // will remain unchanged
-            this.select = function(ids){
-                allItems(ids, $scope.item.selected, 'selected');
-            };
+### `ChainCommander.prototype.execute(* initialValue, Object|Function context)`
 
-            // this is a conditional function, must return true or false
-            this.isSelected = function(){
-                return $scope.item.selected;
-            };
+Executes your definitions on the given context. Returns a promise.
 
-            this.toggle = function(ids){
-                allItems(ids, !$scope.item.selected, 'visible');
-            };
-
-            // this is a conditional function, must return true or false
-            this.isCombo = function(ids){
-                if (ids.indexOf(scope.item.id) !== -1){
-                    return true;
-                }
-                return false;
-            };
-
-            this.sum = function(){
-                value = 0;
-                for(var i = 0, len = $scope.items.length; i < len; i++) {
-                    if ($scope.items[i].selected) {
-                        value += $scope.items[i].price;
-                    }
-                }
-                return value;
-            }
-        },
-        link: function(scope, element, attrs, controller){
-            element.on('click', function(){
-                scope.item.definition(0, controller).done(function(value){
-                    $timeout(function(){
-                        scope.value = value;
-                    });
-                });
-            });
+```js
+var
+    cc = new ChainCommander([{"exec":[["oops"]]}], {debug: true, throws: true}),
+    context = {
+        oops: function(){
         }
     };
-});
 
-app.controller('SelectCtrl', function($scope, $http){
-    $scope.value = 0;
-    $scope.items = [];
-
-    $http.get('/items.json').success(function(items){
-        $scope.items = items;
-
-        for(var i = 0, len = $scope.items.length; i < len; i++){
-            // transform our definitions to a chain of commands
-            // this is done once, unless you need to change the definition later on
-            $scope.items[i].definition = new ChainCommander($scope.items.definition);
-        }
-    });
+cc.execute({initial: 'a', value: 0}, context).done(function(value){
+  console.log(value);
 });
 ```
 
-This is `items.json`:
+### `ChainCommander.all(* value, Array arr, Object|Function context)`
 
-```json
-[
-    {
-        "name":"Sky diving",
-        "selected":false,
-        "visible":true,
-        "id":1,
-        "price":2900,
-        "definitions":[]
-    },
-    {
-        "name":"Snowboarding",
-        "selected":false,
-        "visible":true,
-        "id":2,
-        "combo":[4],
-        "price":780,
-        "definitions":[
-            {"if": {
-                "check":[
-                    ["isSelected"]
-                ],
-                "exec":[
-                    ["toggle",[1,3]]
-                ]
-            }},
-            {"if": {
-                "check":[
-                    ["isCombo"]
-                ],
-                "exec":[
-                    ["discount"],
-                    ["sum"]
-                ]
-            }}
-        ]
-    },
-    {
-        "name":
-        "Scuba Diving",
-        "selected":false,
-        "visible":true,
-        "id":3,
-        "price":250,
-        "definitions":[]
-    },
-    {
-        "name":"Trail Bike",
-        "selected":false,
-        "visible":true,
-        "id":4,
-        "price":1250,
-        "definitions":[
-            {"if": {
-                "check":[
-                    ["isSelected"]
-                ],
-                "exec":[
-                    ["toggle",[1,2,3]]
-                ]
-            }}
-        ]
-    }
-]
-```
-
-## ChainCommander.all
-
-Taking that you have an array with many chaincommanders, that you want to execute in order, with the same context:
+Taking that you have an array with many Chain Commanders, that you want to execute in order, with the same context
+returning a promise in the end:
 
 ```js
 ChainCommander.all('initial value', arrayOfCommanders, context).done(function(value){
@@ -309,16 +222,37 @@ ChainCommander.all('initial value', arrayOfCommanders, context).done(function(va
 });
 ```
 
+the arrayOfCommanders also allow an array of array of Commanders, that means, you can use it like this:
+
+```js
+function getSelectedAndReturnArray(arr){
+    return arr
+        .filter(function(i){ return i.selected; })
+        .map(function(i){ return i.cmds; });
+}
+
+var arrayOfItemsThatGotCommanders1 = [createCommander(0), createCommander(1) /*...*/];
+
+ChainCommander.all('initial value', [
+    getSelectedAndReturnArray(arrayOfItemsThatGotCommanders1),
+    commanderInstance
+], context).done(function(value){
+  // value = 'initial value' transformed
+});
+```
+
 ## Debug
 
 The definition and the executing code is "forgiving", it means, if you try to use a function that doesnt exists,
-it will fail silently and continue in the chain. You can disable this by setting the instance "throws" to true
+it will fail silently and continue in the chain.
 
-You can watch the flow in a verbose mode setting the
+You can watch the flow in a verbose mode setting the `debug` option to `true`
 
 ```js
-var cc = ChainCommander(cmds, {debug: true, throws: true});
+var cc = ChainCommander(definitionArray, {debug: true, throws: true});
 ```
 
-then watch your console
+then watch your console. If you want to spot undefined functions or mismatched arguments, set `throws` to `true`.
+
+**Never use any of those in production, since they might generate a lot of unresolved promises.**
 

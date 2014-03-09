@@ -1,0 +1,14 @@
+<li ng-repeat="item in clickyCtrl.state">
+	<div ng-click="clickyCtrl.click(item)" ng-class="{'active':item.selected}" class="btn btn-primary btn-lg">
+		<div ng-if="clickyCtrl.type==='behaviors'">
+			<div>{{item.name}}</div>
+		</div>
+		<div ng-if="clickyCtrl.type==='items'">
+			<div>{{item.name}}</div>
+			<div>{{item.price|currency}}</div>
+		</div>
+		<div ng-if="clickyCtrl.type==='durations'">
+			<div>{{item.length|inflect:'month'}} {{ item.discount ? ' - ' + item.discount * 100 + '% OFF' : '' }}</div>
+		</div>
+	</div>
+</li>

@@ -1,4 +1,4 @@
+--require test/globals.js
 --reporter list
---ui exports
---check-leaks
---debug-brk
+--ui bdd
+test/test.js

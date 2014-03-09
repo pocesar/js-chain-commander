@@ -1,8 +1,8 @@
 {
   "name"   : "chain-commander",
-  "version": "0.1.3",
+  "version": "1.0.0",
   "main": "./lib/chain-commander.js",
-  "description":"Chain commander is a library based on Q library, to encapsulate business rules logic in form of javascript objects or JSON.",
+  "description":"Chain commander is a library based on Bluebird promise library, to encapsulate business rules logic in form of javascript objects or JSON.",
   "keywords": [
     "workflow",
     "flow",
@@ -14,7 +14,9 @@
     "chain-of-responsibility",
     "chain-of-command",
     "promise",
-    "conditional"
+    "conditional",
+    "scriptable",
+    "json script"
   ],
   "author": "Paulo Cesar",
   "license": "MIT",
@@ -23,16 +25,16 @@
     "url":"git@github.com:pocesar/js-chain-commander.git"
   },
   "scripts": {
-    "test": "jshint test lib example && mocha"
+    "test": "jshint test/test.js lib/chain-commander.js example/app.js && mocha"
   },
   "dependencies": {
-    "q": "*"
+    "bluebird": "*"
   },
   "devDependencies": {
     "jshint": "*",
     "mocha": "*",
     "expect.js": "*",
-    "grunt": "0.4.x",
+    "grunt": "^0.4.x",
     "grunt-mocha-istanbul":"*",
     "coveralls":"*"
   }
