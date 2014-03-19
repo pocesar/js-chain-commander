@@ -191,7 +191,26 @@ type of app created with Chain Commander and AngularJS (do a `bower install` ins
 Creates a new predefined chain that will execute your code when you call `execute`
 
 ```js
-var cc = new ChainCommander([{"exec":[["oops"]]}], {debug: true, throws: true});
+var cc = new ChainCommander([{"exec":[["oops"]]}], {debug: true, throws: true, member: 'memberOfTheObject'});
+```
+
+When creating a `ChainCommander` with the `member` function, all executed functions will be passed as the last
+parameter the current bound object, like so:
+
+```js
+var
+  context = {
+    oops: function(value, thisobj){
+      // value = 0 (from execute)
+      // thisobj = obj
+    }
+  },
+  obj = {
+    some:'data',
+    defs:[{"exec":[["oops"]]}]
+  }, cc = new ChainCommander(obj, {debug: true, throws: true, member: 'defs'});
+
+cc.execute(0, context);
 ```
 
 #### `ChainCommander.prototype.execute(* initialValue, Object|Function context)`

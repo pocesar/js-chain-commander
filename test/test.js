@@ -4,12 +4,12 @@ describe('Chain Commander', function (){
     var cc;
 
     cc = ChainCommander('{}');
-    expect(cc.obj).to.eql([
+    expect(cc.defs).to.eql([
       {}
     ]);
 
     cc = ChainCommander({});
-    expect(cc.obj).to.eql([
+    expect(cc.defs).to.eql([
       {}
     ]);
   });
@@ -529,6 +529,31 @@ describe('Chain Commander', function (){
     }).done(done);
   });
 
+  it('passes the last parameter as the calling object', function(done){
+    var context = {
+      val: function(add, value, obj) {
+        expect(obj.exists).to.be(true);
+        return value + add + obj.add;
+      },
+      conditional: function(value, _obj) {
+        expect(_obj).to.be(obj);
+        return _obj.exists;
+      },
+      success: function(){
+        expect(arguments).to.have.length(2);
+      }
+    }, cc, obj = {add: '2', exists: true, defs: [{'exec':[['val','1']]},{'if':{'check':[['conditional']],'exec':[['success']]}}]};
+
+    cc = new ChainCommander(obj, {member:'defs', throws: true});
+
+    expect(cc.member).to.equal('defs');
+    expect(cc.context).to.be(obj);
+    cc.execute('a', context).done(function(val){
+      expect(val).to.be('a12');
+      done();
+    });
+  });
+
   it('execute array of arrays of chain commanders and ignore non-instances', function (done){
     var context, cmds = [
       {
@@ -621,10 +646,16 @@ describe('Chain Commander', function (){
     var run = function (){
       var cc;
 
-      cc = new ChainCommander(cmds.slice(thrown), {throws: true});
-      execDomain.run(function (){
-        cc.execute(0, {}).done(function (){});
-      });
+      if (thrown === 3) {
+        execDomain.run(function(){
+          ChainCommander(cmds.slice(thrown-1), {member: 'dummy', throws: true});
+        });
+      } else {
+        cc = new ChainCommander(cmds.slice(thrown), {throws: true});
+        execDomain.run(function (){
+          cc.execute(0, {}).done(function (){});
+        });
+      }
     };
 
     execDomain.on('error', function (err){
@@ -641,6 +672,11 @@ describe('Chain Commander', function (){
           break;
         case 2:
           expect(err.message).to.be('"exec" function "dontExists" doesnt exists');
+          thrown++;
+          run();
+          break;
+        case 3:
+          expect(err.message).to.be('Object provided doesnt have member "dummy"');
           done();
           break;
       }
