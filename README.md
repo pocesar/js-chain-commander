@@ -186,12 +186,12 @@ type of app created with Chain Commander and AngularJS (do a `bower install` ins
 
 ## API
 
-#### `new ChainCommander(Array|String definitions, Object options)`
+#### `new ChainCommander(Array|String definitions [, Object options])`
 
 Creates a new predefined chain that will execute your code when you call `execute`
 
 ```js
-var cc = new ChainCommander([{"exec":[["oops"]]}], {debug: true, throws: true, member: 'memberOfTheObject'});
+var cc = new ChainCommander([{"exec":[["oops"]]}]);
 ```
 
 When creating a `ChainCommander` with the `member` function, all executed functions will be passed as the last
@@ -230,7 +230,7 @@ cc.execute({initial: 'a', value: 0}, context).done(function(value){
 });
 ```
 
-#### `ChainCommander.all(* value, Array arr, Object|Function context)`
+#### `ChainCommander.all(* value, Array arr, Object|Function context [, Function tap])`
 
 Taking that you have an array with many Chain Commanders, that you want to execute in order, with the same context
 returning a promise in the end:
@@ -258,6 +258,13 @@ ChainCommander.all('initial value', [
 ], context).done(function(value){
   // value = 'initial value' transformed
 });
+```
+
+The optional `tap` parameter is a functions that after each item, will be called. It's a side effect
+callback and you can use it to "spy" on the current commands being executed
+
+```js
+ChainCommander.all('initial value', arrayofcmds, context, console.log); // spits out the current value (and the item in the last parameter if you used member)
 ```
 
 ## Debug

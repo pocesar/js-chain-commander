@@ -554,6 +554,50 @@ describe('Chain Commander', function (){
     });
   });
 
+  it('taps to function', function(done){
+    var context = {
+      val: function(add, value, obj) {
+        if (obj) {
+          expect(obj.exists).to.be(true);
+          return value + add + obj.add;
+        } else {
+          return value + add;
+        }
+      },
+      conditional: function(value, _obj) {
+        if (_obj) {
+          expect(_obj).to.be(obj);
+          return _obj.exists;
+        } else {
+          return true;
+        }
+      },
+      success: function(){
+        expect(arguments).to.have.length(2);
+      }
+    }, calls = 0, ccs = [], obj = {add: '2', exists: true, defs: [{'exec':[['val','1']]},{'if':{'check':[['conditional']],'exec':[['success']]}}]};
+
+    ccs.push(new ChainCommander(obj, {member:'defs'}));
+    ccs.push([
+      new ChainCommander(obj, {member:'defs'}),
+      new ChainCommander(obj.defs)
+    ]);
+    ccs.push(new ChainCommander(obj, {member:'defs'}));
+
+    ChainCommander.all('a', ccs, context, function(val, _obj){
+      calls++;
+      if (_obj) {
+        expect(_obj).to.be(obj);
+        _obj.chumba = true;
+      }
+    }).done(function(d){
+      expect(d).to.be('a1212112');
+      expect(obj.chumba).to.be(true);
+      expect(calls).to.be(4);
+      done();
+    });
+  });
+
   it('execute array of arrays of chain commanders and ignore non-instances', function (done){
     var context, cmds = [
       {
