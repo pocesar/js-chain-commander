@@ -1,6 +1,6 @@
 {
   "name": "chain-commander",
-  "version": "1.0.2",
+  "version": "1.1.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/pocesar/js-chain-commander"
@@ -36,7 +36,7 @@
     "bluebird": "*"
   },
   "devDependencies": {
-    "mocha": "~1.17.1",
-    "expect": "~0.3.1"
+    "mocha": "1.x.x",
+    "expect": "0.x.x"
   }
 }

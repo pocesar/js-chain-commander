@@ -1,7 +1,7 @@
 {
   "name": "chain-commander",
   "repo": "pocesar/js-chain-commander",
-  "version": "1.0.2",
+  "version": "1.1.1",
   "description": "Chain commander is a library based on Bluebird library, to encapsulate business rules logic in form of javascript objects or JSON.",
   "keywords": [
     "workflow",
