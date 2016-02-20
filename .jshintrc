@@ -1,25 +1,25 @@
 {
-  "bitwise" : true,
-  "curly"   : true,
-  "eqeqeq"  : false,
-  "forin"   : false,
-  "noarg"   : true,
-  "noempty" : false,
-  "newcap"  : false,
-  "nonew"   : true,
-  "undef"   : true,
-  "devel"   : true,
-  "node"    : true,
-  "sub"     : true,
-  "globals" : {
-    "angular": true,
-    "ChainCommander":true,
-    "it": true,
-    "describe": true,
-    "CC": true,
-    "expect": true,
-    "Q": true,
-    "domain": true
-  },
-  "quotmark": "single"
+    "bitwise": true,
+    "curly": true,
+    "eqeqeq": false,
+    "forin": false,
+    "noarg": true,
+    "noempty": false,
+    "newcap": false,
+    "nonew": true,
+    "undef": true,
+    "devel": true,
+    "node": true,
+    "sub": true,
+    "globals": {
+        "angular": true,
+        "define": true,
+        "ChainCommander": true,
+        "it": true,
+        "describe": true,
+        "CC": true,
+        "expect": true,
+        "Q": true
+    },
+    "quotmark": "single"
 }

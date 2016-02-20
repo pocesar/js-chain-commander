@@ -10,13 +10,14 @@
 	<div id="mocha"></div>
 	<script src="../bower_components/mocha/mocha.js"></script>
 	<script>mocha.ui('bdd');</script>
-	<script src="../bower_components/expect/index.js"></script>
+	<script src="../bower_components/chai/chai.js"></script>
+    <script>expect = chai.expect;</script>
 	<script src="../bower_components/bluebird/js/browser/bluebird.js"></script>
 	<script src="../lib/chain-commander.js"></script>
 	<script src="test.js"></script>
 	<script>
 		onload = function(){
-			Q = Promise.noConflict();
+			Q = Promise = Promise.noConflict();
 			mocha.run();
 		};
 	</script>

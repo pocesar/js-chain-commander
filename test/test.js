@@ -4,18 +4,18 @@ describe('Chain Commander', function (){
     var cc;
 
     cc = ChainCommander('{}');
-    expect(cc.defs).to.eql([
+    expect(cc.defs).to.deep.equal([
       {}
     ]);
 
     cc = ChainCommander({});
-    expect(cc.defs).to.eql([
+    expect(cc.defs).to.deep.equal([
       {}
     ]);
   });
 
-  it('if without member check is forgiving', function (done){
-    ChainCommander([
+  it('if without member check is forgiving', function (){
+    return ChainCommander([
       {if: {
         exec: [
           ['done']
@@ -23,11 +23,12 @@ describe('Chain Commander', function (){
       }}
     ]).execute('ok', {}).then(function (value){
       expect(value).to.equal('ok');
-      done();
-    }).done();
+
+      return null;
+    });
   });
 
-  it('exec call functions in the context object', function (done){
+  it('exec call functions in the context object', function (){
     var cc, obj;
 
     obj = {
@@ -44,13 +45,14 @@ describe('Chain Commander', function (){
       ['multiply', 10]
     ]});
 
-    cc.execute(10, obj).done(function (value){
-      expect(value).to.be(200);
-      done();
+    return cc.execute(10, obj).then(function (value){
+      expect(value).to.equal(200);
+
+      return null;
     });
   });
 
-  it('work with one conditional', function (done){
+  it('work with one conditional', function (){
     var cc, obj;
 
     obj = {
@@ -94,27 +96,26 @@ describe('Chain Commander', function (){
       }
     ]);
 
-    cc
+    return cc
       .execute(0, obj)
-      .done(function (value){
-        expect(obj._alterMe).to.be('altered');
-        expect(value).to.be(10);
-        done();
+      .then(function (value){
+        expect(obj._alterMe).to.equal('altered');
+        expect(value).to.equal(10);
+
+        return null;
       });
   });
 
-  it('deals with exec returning another promise', function (done){
+  it('deals with exec returning another promise', function (){
     var cc, obj;
 
     obj = {
       returnPromise: function (value){
-        var d = Q.pending();
-
-        setTimeout(function (){
-          d.resolve({'After timeout: ': value});
-        }, 10);
-
-        return d.promise;
+        return new Q(function(resolve) {
+            setTimeout(function (){
+            resolve({'After timeout: ': value});
+            }, 10);
+        });
       }
     };
 
@@ -122,13 +123,14 @@ describe('Chain Commander', function (){
       ['returnPromise']
     ]});
 
-    cc.execute(0, obj).done(function (val){
-      expect(val).to.eql({'After timeout: ': 0});
-      done();
+    return cc.execute(0, obj).then(function (val){
+      expect(val).to.deep.equal({'After timeout: ': 0});
+
+      return null;
     });
   });
 
-  it('ifs work with promises', function (done){
+  it('ifs work with promises', function (){
     var cc, obj, cmds = [
       {
         if: {
@@ -157,24 +159,23 @@ describe('Chain Commander', function (){
         return value + letter;
       },
       checkPromise: function (){
-        var d = Q.defer();
-
-        setTimeout(function (){
-          d.resolve(true);
-        }, 5);
-
-        return d.promise;
+        return new Q(function(resolve){
+            setTimeout(function (){
+                resolve(true);
+            }, 5);
+        });
       }
     };
 
     cc = ChainCommander(cmds);
-    cc.execute('a', obj).done(function (value){
-      expect(value).to.be('abc');
-      done();
+    return cc.execute('a', obj).then(function (value){
+      expect(value).to.equal('abc');
+
+      return null;
     });
   });
 
-  it('test the given example', function (done){
+  it('test the given example', function (){
     var cc, cmds = [ // It uses arrays because it's the only way it can ensure order.
       {
         if: {
@@ -258,29 +259,26 @@ describe('Chain Commander', function (){
         }
       },
       startTimer: function (args, value){
-        var d = Q.defer();
-
-        if (this.secondPass === false) {
-          setTimeout(function (){
-            d.resolve('Oops'); // this will be overwritten by the goOn "exec", that will continue from the previous value
-          }, 1000);
-        } else {
-          d.reject();
-        }
-
-        return d.promise;
+        return new Q(function(resolve, reject){
+            if (this.secondPass === false) {
+                setTimeout(function (){
+                    resolve('Oops'); // this will be overwritten by the goOn "exec", that will continue from the previous value
+                }, 1000);
+            } else {
+                reject(new Error('startTimer'));
+            }
+        });
       }
     };
 
     cc = ChainCommander(cmds);
-    cc.execute(10, instance).done(function (value){
-      expect(value).to.equal(101);
-      done();
+    return cc.execute(10, instance).then(function (value){
+        expect(value).to.equal(101);
+        return null;
     });
-
   });
 
-  it('use objects and change them while passing around', function (done){
+  it('use objects and change them while passing around', function (){
     var cc, nobj, context, cmds = [
       {
         exec: [
@@ -315,14 +313,15 @@ describe('Chain Commander', function (){
     };
 
     cc = ChainCommander(cmds);
-    cc.execute(nobj, context).done(function (value){
-      expect(value).to.be(nobj);
-      expect(value).to.eql({value1: 2, value2: 3, value3: null});
-      done();
+    return cc.execute(nobj, context).then(function (value){
+      expect(value).to.equal(nobj);
+      expect(value).to.deep.equal({value1: 2, value2: 3, value3: null});
+
+      return null;
     });
   });
 
-  it('deep nested ifs and elses', function (done){
+  it('deep nested ifs and elses', function (){
     var cc, context, cmds = [
       {
         if: {
@@ -384,13 +383,14 @@ describe('Chain Commander', function (){
 
     cc = ChainCommander(cmds);
 
-    cc.execute(0, context).done(function (value){
-      expect(value).to.be('done');
-      done();
+    return cc.execute(0, context).then(function (value){
+      expect(value).to.equal('done');
+
+      return null;
     });
   });
 
-  it('work on instances', function (done){
+  it('work on instances', function (){
     var cc, cmds = [
       {
         if: {
@@ -456,14 +456,15 @@ describe('Chain Commander', function (){
     var context = new Context(function (value){ return ++value; });
 
     cc = ChainCommander(cmds);
-    cc.execute(0, context).done(function (value){
-      expect(value).to.be(4);
-      expect(context.count).to.be(7);
-      done();
+    return cc.execute(0, context).then(function (value){
+      expect(value).to.equal(4);
+      expect(context.count).to.equal(7);
+
+      return null;
     });
   });
 
-  it('two if checks', function (done){
+  it('two if checks', function (){
     var context, cmds = [
       {
         if: {
@@ -495,13 +496,15 @@ describe('Chain Commander', function (){
     };
 
     cc = new ChainCommander(cmds);
-    cc.execute('', context).then(function (){
-      expect(context.called).to.be(false);
-      expect(context.count).to.be(1);
-    }).done(done);
+    return cc.execute('', context).then(function (){
+      expect(context.called).to.equal(false);
+      expect(context.count).to.equal(1);
+
+      return null;
+    });
   });
 
-  it('execute array of chain commanders', function (done){
+  it('execute array of chain commanders', function (){
     var context, cmds = [
       {
         exec: [
@@ -524,19 +527,21 @@ describe('Chain Commander', function (){
       }
     };
 
-    ChainCommander.all('wow-', ccs, context).then(function (value){
+    return ChainCommander.all('wow-', ccs, context).then(function (value){
       expect(value).to.equal('wow-abcda');
-    }).done(done);
+
+      return null;
+    });
   });
 
-  it('passes the last parameter as the calling object', function(done){
+  it('passes the last parameter as the calling object', function(){
     var context = {
       val: function(add, value, obj) {
-        expect(obj.exists).to.be(true);
+        expect(obj.exists).to.equal(true);
         return value + add + obj.add;
       },
       conditional: function(value, _obj) {
-        expect(_obj).to.be(obj);
+        expect(_obj).to.equal(obj);
         return _obj.exists;
       },
       success: function(){
@@ -547,18 +552,19 @@ describe('Chain Commander', function (){
     cc = new ChainCommander(obj, {member:'defs', throws: true});
 
     expect(cc.member).to.equal('defs');
-    expect(cc.context).to.be(obj);
-    cc.execute('a', context).done(function(val){
-      expect(val).to.be('a12');
-      done();
+    expect(cc.context).to.equal(obj);
+    return cc.execute('a', context).then(function(val){
+      expect(val).to.equal('a12');
+
+      return null;
     });
   });
 
-  it('taps to function', function(done){
+  it('taps to function', function(){
     var context = {
       val: function(add, value, obj) {
         if (obj) {
-          expect(obj.exists).to.be(true);
+          expect(obj.exists).to.equal(true);
           return value + add + obj.add;
         } else {
           return value + add;
@@ -566,7 +572,7 @@ describe('Chain Commander', function (){
       },
       conditional: function(value, _obj) {
         if (_obj) {
-          expect(_obj).to.be(obj);
+          expect(_obj).to.equal(obj);
           return _obj.exists;
         } else {
           return true;
@@ -584,21 +590,22 @@ describe('Chain Commander', function (){
     ]);
     ccs.push(new ChainCommander(obj, {member:'defs'}));
 
-    ChainCommander.all('a', ccs, context, function(val, _obj){
+    return ChainCommander.all('a', ccs, context, function(val, _obj){
       calls++;
       if (_obj) {
-        expect(_obj).to.be(obj);
+        expect(_obj).to.equal(obj);
         _obj.chumba = true;
       }
-    }).done(function(d){
-      expect(d).to.be('a1212112');
-      expect(obj.chumba).to.be(true);
-      expect(calls).to.be(4);
-      done();
+    }).then(function(d){
+      expect(d).to.equal('a1212112');
+      expect(obj.chumba).to.equal(true);
+      expect(calls).to.equal(4);
+
+      return null;
     });
   });
 
-  it('execute array of arrays of chain commanders and ignore non-instances', function (done){
+  it('execute array of arrays of chain commanders and ignore non-instances', function (){
     var context, cmds = [
       {
         exec: [
@@ -620,13 +627,17 @@ describe('Chain Commander', function (){
       }
     };
 
-    ChainCommander.all('wow-', ccs, context).then(function (value){
+    return ChainCommander.all('wow-', ccs, context).then(function (value){
       expect(value).to.equal('wow-abcda');
-    }).done(done);
+
+      return null;
+    });
   });
 
-  it('forgiving on non existant checks and functions', function (done){
-    var cc, obj = {thisOneDoes: function (plus, value){ return value + plus; }}, cmds = [
+  it('forgiving on non existant checks and functions', function (){
+    var cc;
+    var obj = {thisOneDoes: function (plus, value){ return value + plus; }};
+    var cmds = [
       {
         exec: [
           ['doesntExist']
@@ -650,20 +661,15 @@ describe('Chain Commander', function (){
     ];
 
     cc = ChainCommander(cmds);
-    cc.execute(10, obj).done(function (value){
-      expect(value).to.be(11);
-      done();
+    return cc.execute(10, obj).then(function (value){
+      expect(value).to.equal(11);
+
+      return null;
     });
   });
 
   it('unforgiving definition', function (done){
-    if (typeof domain === 'undefined') {
-      // not meant for the browser
-      done();
-      return;
-    }
-    var execDomain = domain.create(),
-      cmds = [
+    var cmds = [
         {
           if: {
             check: [
@@ -687,44 +693,35 @@ describe('Chain Commander', function (){
 
     var thrown = 0;
 
+    expect(function(){
+        ChainCommander(cmds.slice(thrown-1), {member: 'dummy', throws: true});
+    }).to.throw();
+
     var run = function (){
-      var cc;
+          var cc;
 
-      if (thrown === 3) {
-        execDomain.run(function(){
-          ChainCommander(cmds.slice(thrown-1), {member: 'dummy', throws: true});
-        });
-      } else {
         cc = new ChainCommander(cmds.slice(thrown), {throws: true});
-        execDomain.run(function (){
-          cc.execute(0, {}).done(function (){});
-        });
-      }
-    };
 
-    execDomain.on('error', function (err){
-      switch (thrown) {
-        case 0:
-          expect(err.message).to.be('"if" function "dontExist" doesnt exists');
-          thrown++;
-          run();
-          break;
-        case 1:
-          expect(err.message).to.be('Missing "check" in "if"');
-          thrown++;
-          run();
-          break;
-        case 2:
-          expect(err.message).to.be('"exec" function "dontExists" doesnt exists');
-          thrown++;
-          run();
-          break;
-        case 3:
-          expect(err.message).to.be('Object provided doesnt have member "dummy"');
-          done();
-          break;
-      }
-    });
+        cc.execute(0, {}).catch(function(err){
+            switch (thrown) {
+                case 0:
+                    expect(err.message).to.equal('"if" function "dontExist" doesnt exists');
+                    thrown++;
+                    run();
+                    break;
+                case 1:
+                    expect(err.message).to.equal('Missing "check" in "if"');
+                    thrown++;
+                    run();
+                    break;
+                case 2:
+                    expect(err.message).to.equal('"exec" function "dontExists" doesnt exists');
+                    thrown++;
+                    done();
+                    break;
+            }
+        });
+    };
 
     run();
   });

@@ -1,41 +1,44 @@
 {
-  "name"   : "chain-commander",
-  "version": "1.2.1",
-  "main": "./lib/chain-commander.js",
-  "description":"Chain commander is a library based on Bluebird promise library, to encapsulate business rules logic in form of javascript objects or JSON.",
-  "keywords": [
-    "workflow",
-    "flow",
-    "flowcontrol",
-    "business logic",
-    "business rule",
-    "json",
-    "pojo",
-    "chain-of-responsibility",
-    "chain-of-command",
-    "promise",
-    "conditional",
-    "scriptable",
-    "json script"
-  ],
-  "author": "Paulo Cesar",
-  "license": "MIT",
-  "repository": {
-    "type":"git",
-    "url":"git@github.com:pocesar/js-chain-commander.git"
-  },
-  "scripts": {
-    "test": "jshint test/test.js lib/chain-commander.js example/app.js && mocha"
-  },
-  "dependencies": {
-    "bluebird": "*"
-  },
-  "devDependencies": {
-    "jshint": "*",
-    "mocha": "*",
-    "expect.js": "*",
-    "grunt": "0.4.x",
-    "grunt-mocha-istanbul":"*",
-    "coveralls":"*"
-  }
+    "name": "chain-commander",
+    "version": "2.0.0",
+    "main": "./lib/chain-commander.js",
+    "browser": "./lib/chain-commander.js",
+    "description": "Chain commander is a library based on Bluebird promise library, to encapsulate business rules logic in form of javascript objects or JSON.",
+    "keywords": [
+        "workflow",
+        "flow",
+        "flowcontrol",
+        "business logic",
+        "business rule",
+        "json",
+        "pojo",
+        "chain-of-responsibility",
+        "chain-of-command",
+        "promise",
+        "conditional",
+        "scriptable",
+        "json script"
+    ],
+    "author": "Paulo Cesar",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/pocesar/js-chain-commander.git"
+    },
+    "scripts": {
+        "test": "jshint test/test.js lib/chain-commander.js example/app.js && mocha"
+    },
+    "peerDependencies": {
+        "bluebird": ">=2 && <4"
+    },
+    "devDependencies": {
+        "bluebird": "^3.3.1",
+        "jshint": "^2.9.1",
+        "mocha": "^2.4.5",
+        "chai": "^3.5.0",
+        "istanbul": "^0.4.2",
+        "grunt": ">=0.4.5",
+        "grunt-mocha-istanbul": "git://github.com/pocesar/grunt-mocha-istanbul#issue%2349",
+        "coveralls": "^2.11.6"
+    }
 }

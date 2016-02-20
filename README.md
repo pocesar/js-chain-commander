@@ -157,17 +157,17 @@ Given the above object/JSON, you will create a new context that will deal with a
           }
         },
         startTimer: function (args, value){
-          var d = Q.defer();
+          var self = this;
 
-          if (this.secondPass === false) {
-            setTimeout(function (){
-              d.resolve('Oops'); // this will be overwritten by the goOn "exec", that will continue from the previous value
-            }, 1000);
-          } else {
-            d.reject();
-          }
-
-          return d.promise;
+          return new Q(function(resolve, reject) {
+            if (self.secondPass === false) {
+                setTimeout(function (){
+                    resolve('Oops'); // this will be overwritten by the goOn "exec", that will continue from the previous value
+                }, 1000);
+            } else {
+                reject();
+            }
+          });
         }
       };
 
@@ -186,12 +186,18 @@ type of app created with Chain Commander and AngularJS (do a `bower install` ins
 
 ## API
 
-#### `new ChainCommander(Array|String definitions [, Object options])`
+### new ChainCommander(definitions: Array|string, options: Object = null)
 
 Creates a new predefined chain that will execute your code when you call `execute`
 
 ```js
-var cc = new ChainCommander([{"exec":[["oops"]]}]);
+var cc = new ChainCommander([
+    {
+        "exec":[
+            ["oops"]
+        ]
+    }
+]);
 ```
 
 When creating a `ChainCommander` with the `member` function, all executed functions will be passed as the last
@@ -207,35 +213,57 @@ var
   },
   obj = {
     some:'data',
-    defs:[{"exec":[["oops"]]}]
+    defs:[
+        {
+            "exec":[
+                ["oops"]
+            ]
+        }
+    ]
   }, cc = new ChainCommander(obj, {debug: true, throws: true, member: 'defs'});
 
 cc.execute(0, context);
 ```
 
-#### `ChainCommander.prototype.execute(* initialValue, Object|Function context)`
+### ChainCommander.prototype.execute(initialValue: any, context: Object|Function)
 
 Executes your definitions on the given context. Returns a promise.
 
 ```js
 var
-    cc = new ChainCommander([{"exec":[["oops"]]}], {debug: true, throws: true}),
+    cc = new ChainCommander([
+        {
+            "exec":[
+                ["oops"]
+            ]
+        }
+    ], {debug: true, throws: true}),
     context = {
-        oops: function(){
+        oops: function(obj){
+            obj.initial = 'b';
+            obj.value++;
+
+            return obj;
         }
     };
 
-cc.execute({initial: 'a', value: 0}, context).done(function(value){
-  console.log(value);
-});
+    cc.execute({initial: 'a', value: 0}, context).done(function(value){
+        console.log(value); // {initial: 'b', value: 1}
+    });
 ```
 
-#### `ChainCommander.all(* value, Array arr, Object|Function context [, Function tap])`
+### ChainCommander.all(initialValue: any, arr: ChainCommander[], context: Object|Function, tap: Function = void 0)
 
 Taking that you have an array with many Chain Commanders, that you want to execute in order, with the same context
 returning a promise in the end:
 
 ```js
+var arrayOfCommanders = [
+    new ChainCommander(defs),
+    new ChainCommander(defs2),
+    new ChainCommander(defs3),
+];
+
 ChainCommander.all('initial value', arrayOfCommanders, context).done(function(value){
   // initial value transformed
 });
@@ -255,7 +283,7 @@ var arrayOfItemsThatGotCommanders1 = [createCommander(0), createCommander(1) /*.
 ChainCommander.all('initial value', [
     getSelectedAndReturnArray(arrayOfItemsThatGotCommanders1),
     commanderInstance
-], context).done(function(value){
+], context).then(function(value){
   // value = 'initial value' transformed
 });
 ```
@@ -281,4 +309,3 @@ var cc = ChainCommander(definitionArray, {debug: true, throws: true});
 then watch your console. If you want to spot undefined functions or mismatched arguments, set `throws` to `true`.
 
 **Never use any of those in production, since they might generate a lot of unresolved promises.**
-

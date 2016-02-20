@@ -1,4 +1,6 @@
+process.env.NODE_ENV = 'test';
+
 Q = require('bluebird');
-expect = require('expect.js');
+expect = require('chai').expect;
 domain = require('domain');
 ChainCommander = require('../lib/chain-commander')(Q);
