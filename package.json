@@ -1,6 +1,6 @@
 {
     "name": "chain-commander",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "main": "./lib/chain-commander.js",
     "browser": "./lib/chain-commander.js",
     "description": "Chain commander is a library based on Bluebird promise library, to encapsulate business rules logic in form of javascript objects or JSON.",
@@ -12,6 +12,8 @@
         "business rule",
         "json",
         "pojo",
+        "data-driven",
+        "data-driven programming",
         "chain-of-responsibility",
         "chain-of-command",
         "promise",
