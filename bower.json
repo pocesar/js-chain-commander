@@ -7,6 +7,7 @@
     "authors": [
         "Paulo Cesar https://github.com/pocesar"
     ],
+    "moduleType": ["node","globals","amd"],
     "description": "Chain commander is a library based on Bluebird library, to encapsulate business rules logic in form of javascript objects or JSON.",
     "main": "./lib/chain-commander.js",
     "license": "MIT",
