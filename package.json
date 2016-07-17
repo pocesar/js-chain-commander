@@ -1,6 +1,6 @@
 {
     "name": "chain-commander",
-    "version": "3.0.0",
+    "version": "3.0.1",
     "main": "./lib/chain-commander.js",
     "browser": "./lib/chain-commander.js",
     "description": "Chain commander is a library based on Bluebird promise library, to encapsulate business rules logic in form of javascript objects or JSON.",
@@ -31,7 +31,7 @@
         "test": "jshint test/test.js lib/chain-commander.js example/app.js && mocha"
     },
     "peerDependencies": {
-        "bluebird": ">=2 && <4"
+        "bluebird": ">=2 <4"
     },
     "devDependencies": {
         "bluebird": "^3.3.1",
@@ -40,7 +40,7 @@
         "chai": "^3.5.0",
         "istanbul": "^0.4.2",
         "grunt": ">=0.4.5",
-        "grunt-mocha-istanbul": "git://github.com/pocesar/grunt-mocha-istanbul#issue%2349",
+        "grunt-mocha-istanbul": "^5.0.1",
         "coveralls": "^2.11.6"
     }
 }

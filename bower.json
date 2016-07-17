@@ -34,7 +34,7 @@
         "bower_components"
     ],
     "dependencies": {
-        "bluebird": ">=2"
+        "bluebird": ">=2 <4"
     },
     "devDependencies": {
         "mocha": "^2.4.5",
